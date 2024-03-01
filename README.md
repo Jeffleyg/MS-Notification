@@ -18,7 +18,7 @@ Um microserviço de notificação para visualização de eventos do usuário é 
 1. Clone o repositório:
  
 ```bash
-[https://github.com/Jeffleyg/MS-USER.git](https://github.com/Jeffleyg/MS-Notification.git)
+(https://github.com/Jeffleyg/MS-Notification.git
  
 2. Configure o banco de dados no arquivo `application.properties`.
  
