@@ -7,7 +7,7 @@ Um microserviço de notificação para visualização de eventos do usuário é 
 ## Requisitos
  
 - Java 17 
-- Banco de dados MySQL
+- Banco de dados MongoDB
 - Spring Boot
 - RabbitMQ
 - Docker
