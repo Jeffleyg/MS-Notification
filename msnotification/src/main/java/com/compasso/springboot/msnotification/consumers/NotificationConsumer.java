@@ -22,21 +22,15 @@ public class NotificationConsumer {
     @RabbitListener(queues = RabbitmqConstantes.FILA_NOTIFICATION)
     private void consumidor(Message message){
         try {
-            // Convertendo a mensagem JSON de volta para o objeto NotificationDTO
             String jsonMessage = new String(message.getBody());
             NotificationDTO notificationDTO = objectMapper.readValue(jsonMessage, NotificationDTO.class);
-
-            // Mapeando os campos da NotificationDTO para a entidade Notification
             Notification notification = new Notification();
             notification.setEmail(notificationDTO.getEmail());
             notification.setEvent(notificationDTO.getEvent());
             notification.setDate(notificationDTO.getDate());
-
-            // Salvando a notificação no banco de dados
             notificationRepository.save(notification);
 
         } catch (Exception e) {
-            // Lidar com erros de desserialização ou de salvamento no banco de dados
             e.printStackTrace();
         }
     }
