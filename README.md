@@ -13,13 +13,6 @@ Esta biblioteca foi desenvolvida para fornecer componentes reutilizáveis para m
 - [Versionamento](#versionamento)
 - [Contribuição](#contribuição)
 
-## Instalação
-
-Para instalar a biblioteca, rode o seguinte comando:
-
-```bash
-npm install nestjs-microservices-lib
-```
 
 ## Configuração
 
