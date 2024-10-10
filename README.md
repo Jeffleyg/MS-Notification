@@ -1,4 +1,4 @@
-# NestJS Microservices Library - Healthcheck & Logger
+# NestJS Monitoring Utils - Healthcheck & Logger
 
 Esta biblioteca foi desenvolvida para fornecer componentes reutilizáveis para microsserviços em NestJS, focando em dois aspectos essenciais: **Healthcheck** (verificação de saúde dos serviços) e **Logger** (sistema de log). A biblioteca é modular, permitindo a fácil integração desses componentes em diferentes microsserviços, promovendo consistência e eficiência no desenvolvimento.
 
@@ -91,11 +91,11 @@ export class HealthcheckService {
 
 #### Exemplo de Resposta
 
-A resposta do endpoint `/health` pode ser:
+A resposta do endpoint `/healthcheck` pode ser:
 
 ```json
 {
-  "status": "UP",
+  "status": "ok",
   "appName": "my-service",
   "appVersion": "1.0.0",
   "timestamp": "2024-10-10T14:00:00Z"
@@ -180,12 +180,12 @@ npm run test
 
 Este projeto segue o padrão de versionamento [SemVer](https://semver.org/).
 
-- **Versão X.Y.Z**: Onde `X` representa uma versão principal com mudanças que podem quebrar compatibilidade, `Y` são novas funcionalidades que não quebram compatibilidade, e `Z` para correções de bugs.
+- **Versão 1.0.0**: Onde `1` representa uma versão principal com mudanças que podem quebrar compatibilidade, `0` são novas funcionalidades que não quebram compatibilidade, e `0` para correções de bugs.
 
 ## Contribuição
 
-Contribuições são bem-vindas! Por favor, envie um Pull Request ou abra uma Issue no repositório [GitHub](https://github.com/seu-repositorio/nestjs-microservices-lib).
+Contribuições são bem-vindas! Por favor, envie um Pull Request ou abra uma Issue no repositório [GitHub](https://git.telefonicabigdata.com/vivo/desenvolvimento/amazonia/valesaudesempre/nestjs-monitoring-utils).
 
 ---
 
-© 2024 Sua Empresa. Todos os direitos reservados.
+
