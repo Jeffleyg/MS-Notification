@@ -1,206 +1,144 @@
-Aqui está o `README.md` atualizado baseado no seu código fornecido, com foco nos componentes Healthcheck e Logger para microsserviços em NestJS:
+# NestJS Microservices Library - Healthcheck & Logger
 
-\```markdown
+Esta biblioteca foi desenvolvida para fornecer componentes reutilizáveis para microsserviços em NestJS, focando em dois aspectos essenciais: **Healthcheck** (verificação de saúde dos serviços) e **Logger** (sistema de log). A biblioteca é modular, permitindo a fácil integração desses componentes em diferentes microsserviços, promovendo consistência e eficiência no desenvolvimento.
 
-\# NestJS Microservices Library - Healthcheck & Logger
-
-Esta biblioteca foi desenvolvida para fornecer componentes reutilizáveis para microsserviços em NestJS, focando em dois aspectos essenciais: \*\*Healthcheck\*\* (verificação de saúde dos branches) e \*\*Logger\*\* (sistema de log). A biblioteca é modular, permitindo a fácil integração desses componentes em diferentes microsserviços, promovendo consistência e eficiência no desenvolvimento.
-
-\## Índice
+## Índice
 
 - [Instalação](#instalação)
 - [Configuração](#configuração)
-- [Healthcheck](#healthcheck)
-- [Logger](#logger)
+  - [Healthcheck](#healthcheck)
+  - [Logger](#logger)
 - [Boas Práticas](#boas-práticas)
 - [Testes](#testes)
 - [Versionamento](#versionamento)
 - [Contribuição](#contribuição)
 
-\## Instalação
+## Instalação
 
-Para instalar a biblioteca, basta rodar o seguinte comando:
+Para instalar a biblioteca, rode o seguinte comando:
 
-\```bash
-
+```bash
 npm install nestjs-microservices-lib
+```
 
-\```
+## Configuração
 
-\## Configuração
+### Healthcheck
 
-\### Healthcheck
+O módulo **Healthcheck** fornece um endpoint para monitorar a saúde dos serviços utilizados no sistema.
 
-O módulo \*\*Healthcheck\*\* fornece um endpoint para monitorar a saúde dos branches utilizados no sistema.
-
-\#### Configuração do Módulo
+#### Configuração do Módulo
 
 1. Importe o `HealthcheckModule` no seu módulo principal do microsserviço:
 
-\```typescript
-
+```typescript
 import { Module } from '@nestjs/common';
-
 import { HealthcheckModule } from 'nestjs-microservices-lib';
 
 @Module({
-
-imports: [HealthcheckModule],
-
+  imports: [HealthcheckModule],
 })
-
 export class AppModule {}
+```
 
-\```
+2. Implemente o controller para expor o endpoint `/health`:
 
-1. Implemente o controller para expor o endpoint `/health`, como no exemplo abaixo:
-
-\```typescript
-
+```typescript
 import { Controller, Get, HttpCode } from '@nestjs/common';
-
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-
 import { HealthcheckService } from '../services/healthcheck.service';
 
 @ApiTags('healthcheck')
-
 @Controller('healthcheck')
-
 export class HealthcheckController {
+  constructor(private readonly healthcheckService: HealthcheckService) {}
 
-constructor(private readonly healthcheckService: HealthcheckService) {}
-
-@Get()
-
-@HttpCode(200)
-
-@ApiOperation({ summary: 'Get status if Server is OK' })
-
-@ApiResponse({ status: 200, description: 'ok' })
-
-@ApiResponse({ status: 500, description: 'Internal server error' })
-
-async status(): Promise<any> {
-
-const status = await this.healthcheckService.status();
-
-return {
-
-status: status,
-
-timestamp: new Date().toISOString(),
-
-};
-
+  @Get()
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Get status if Server is OK' })
+  @ApiResponse({ status: 200, description: 'ok' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async status(): Promise<any> {
+    const status = await this.healthcheckService.status();
+    return {
+      status: status,
+      timestamp: new Date().toISOString(),
+    };
+  }
 }
+```
 
-}
+#### Configuração do Serviço
 
-\```
+O serviço `HealthcheckService` é responsável por recuperar as informações de configuração e status dos serviços:
 
-\#### Configuração do Serviço
-
-O serviço `HealthcheckService` é responsável por recuperar as informações de configuração e status dos branches:
-
-\```typescript
-
+```typescript
 import { Injectable } from '@nestjs/common';
-
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-
 export class HealthcheckService {
+  constructor(private configService: ConfigService) {}
 
-constructor(private configService: ConfigService) {}
-
-status(): any {
-
-return {
-
-appName: this.configService.get('app.name'),
-
-appVersion: this.configService.get('app.version'),
-
-};
-
+  status(): any {
+    return {
+      appName: this.configService.get('app.name'),
+      appVersion: this.configService.get('app.version'),
+    };
+  }
 }
+```
 
-}
+#### Exemplo de Resposta
 
-\```
+A resposta do endpoint `/health` pode ser:
 
-\#### Exemplo de Resposta
-
-A resposta do endpoint `/health` pode ser algo como:
-
-\```json
-
+```json
 {
-
-"status": "UP",
-
-"appName": "my-service",
-
-"appVersion": "1.0.0",
-
-"timestamp": "2024-10-10T14:00:00Z"
-
+  "status": "UP",
+  "appName": "my-service",
+  "appVersion": "1.0.0",
+  "timestamp": "2024-10-10T14:00:00Z"
 }
+```
 
-\```
+- **200 OK**: O serviço está em execução normal.
+- **503 Service Unavailable**: O serviço está indisponível.
 
-- \*\*200 OK\*\*: O branch está em execução normal.
-- \*\*503 Service Unavailable\*\*: O serviço está indisponível.
+### Logger
 
-\### Logger
+O módulo **Logger** padroniza e facilita a geração de logs, permitindo integração com ferramentas como ELK Stack, Datadog, entre outras.
 
-O módulo \*\*Logger\*\* padroniza e facilita a geração de logs, permitindo integração com ferramentas como ELK Stack, Datadog, entre outras.
-
-\#### Configuração do Módulo
+#### Configuração do Módulo
 
 1. Importe o `LoggerModule` no seu microsserviço:
 
-\```typescript
-
+```typescript
 import { Module } from '@nestjs/common';
-
 import { LoggerModule } from 'nestjs-microservices-lib';
 
 @Module({
-
-imports: [LoggerModule],
-
+  imports: [LoggerModule],
 })
-
 export class AppModule {}
+```
 
-\```
+2. Utilize o `LoggerService` para registrar logs no seu serviço ou controladores:
 
-1. Utilize o `LoggerService` para registrar logs no seu serviço ou controladores:
-
-\```typescript
-
+```typescript
 import { LoggerService } from 'nestjs-microservices-lib';
 
 @Injectable()
-
 export class ExampleService {
+  constructor(private readonly logger: LoggerService) {}
 
-constructor(private readonly logger: LoggerService) {}
-
-someFunction() {
-
-this.logger.info('This is an info log message.');
-
+  someFunction() {
+    this.logger.info('This is an info log message.');
+  }
 }
+```
 
-}
-
-\```
-
-\#### Níveis de Log
+#### Níveis de Log
 
 O Logger suporta os seguintes níveis de log:
 
@@ -210,58 +148,44 @@ O Logger suporta os seguintes níveis de log:
 - `DEBUG`: Para informações de depuração.
 - `VERBOSE`: Para mensagens detalhadas.
 
-\#### Exemplo de Log
+#### Exemplo de Log
 
-\```json
-
+```json
 {
-
-"timestamp": "2024-10-10T14:00:00Z",
-
-"level": "INFO",
-
-"message": "This is an info log message",
-
-"context": "ExampleService",
-
-"correlationId": "abc123"
-
+  "timestamp": "2024-10-10T14:00:00Z",
+  "level": "INFO",
+  "message": "This is an info log message",
+  "context": "ExampleService",
+  "correlationId": "abc123"
 }
+```
 
-\```
+## Boas Práticas
 
-\## Boas Práticas
-
-- Adicione verificações de saúde facilmente configuráveis no Healthcheck para garantir que os branches estão funcionando corretamente.
+- Adicione verificações de saúde facilmente configuráveis no Healthcheck para garantir que os serviços estão funcionando corretamente.
 - Use o Logger para manter a consistência dos logs em diferentes microsserviços e facilitar o monitoramento e depuração.
-- Certifique-se de usar os níveis de log apropriados (`INFO`, `WARN`, `ERROR`, etc.) para diferenciar a criticidade dos eventos registrados.
+- Utilize os níveis de log apropriados (`INFO`, `WARN`, `ERROR`, etc.) para diferenciar a criticidade dos eventos registrados.
 
-\## Testes
+## Testes
 
 A biblioteca vem com testes unitários para garantir o comportamento correto dos módulos.
 
 Para rodar os testes:
 
-\```bash
-
+```bash
 npm run test
+```
 
-\```
-
-\## Versionamento
+## Versionamento
 
 Este projeto segue o padrão de versionamento [SemVer](https://semver.org/).
 
-- \*\*Versão X.Y.Z\*\*: Onde `X` representa uma versão principal com mudanças que podem quebrar compatibilidade, `Y` são novas funcionalidades que não quebram compatibilidade, e `Z` para correções de bugs.
+- **Versão X.Y.Z**: Onde `X` representa uma versão principal com mudanças que podem quebrar compatibilidade, `Y` são novas funcionalidades que não quebram compatibilidade, e `Z` para correções de bugs.
 
-\## Contribuição
+## Contribuição
 
 Contribuições são bem-vindas! Por favor, envie um Pull Request ou abra uma Issue no repositório [GitHub](https://github.com/seu-repositorio/nestjs-microservices-lib).
 
-\---
+---
 
 © 2024 Sua Empresa. Todos os direitos reservados.
-
-\```
-
-Este `README.md` fornece instruções claras para o uso do Healthcheck e Logger, com exemplos baseados no seu código atual e práticas para microsserviços NestJS.
